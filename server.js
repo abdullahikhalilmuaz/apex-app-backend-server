@@ -6,10 +6,22 @@ const mongoose = require("mongoose");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
+// CORS — allow mobile app + web
+app.use(
+  cors({
+    origin: "*", // mobile app has no origin header → allow all
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false,
+  }),
+);
+
+// Handle preflight requests for all routes
+app.options("*", cors());
+
+app.use(express.json({ limit: "10mb" }));
 
 mongoose
   .connect(process.env.MONGODB_URI)
