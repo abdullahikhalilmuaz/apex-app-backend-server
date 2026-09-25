@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const ctrl = require("../controllers/studentController");
 
+router.get("/all", auth, ctrl.getAllStudents);
 router.get("/search", auth, ctrl.searchStudents);
 router.get("/class/:className", auth, ctrl.getStudentsByClass);
 router.get("/:id", auth, ctrl.getStudent);

@@ -5,6 +5,7 @@ const StudentSchema = new mongoose.Schema(
     firstName: { type: String, required: true, trim: true },
     middleName: { type: String, trim: true, default: "" },
     lastName: { type: String, required: true, trim: true },
+    admissionNumber: { type: String, unique: true, sparse: true, trim: true },
     class: { type: String, required: true },
     gender: { type: String, enum: ["male", "female"], default: "male" },
     dateOfBirth: Date,
@@ -17,7 +18,6 @@ const StudentSchema = new mongoose.Schema(
   { collection: "students" },
 );
 
-// Text index for parent search
 StudentSchema.index({
   firstName: "text",
   middleName: "text",
