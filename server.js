@@ -2,16 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const http = require("http");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS — allow mobile app + web
 app.use(
   cors({
-    origin: "*", // mobile app has no origin header → allow all
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: false,
@@ -33,6 +33,8 @@ const assignmentRoutes = require("./routes/assignmentRoutes");
 const parentLinkRoutes = require("./routes/parentLinkRoutes");
 const examRoutes = require("./routes/examRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const messagingRoutes = require("./routes/messagingRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 app.use("/api/app/students", studentRoutes);
 app.use("/api/app/attendance", attendanceRoutes);
@@ -41,11 +43,20 @@ app.use("/api/app/assignments", assignmentRoutes);
 app.use("/api/app/parent", parentLinkRoutes);
 app.use("/api/app/exams", examRoutes);
 app.use("/api/app/dashboard", dashboardRoutes);
+app.use("/api/app/messaging", messagingRoutes);
+app.use("/api/app/notifications", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "App-Server running" });
 });
 
-app.listen(PORT, () => {
+// HTTP server required for Socket.IO
+const httpServer = http.createServer(app);
+
+// Init Socket.IO
+const { initSocket } = require("./lib/socket");
+initSocket(httpServer);
+
+httpServer.listen(PORT, () => {
   console.log(`🚀 App-Server running on port ${PORT}`);
 });
